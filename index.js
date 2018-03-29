@@ -15,7 +15,7 @@ SourceDebugPlugin.prototype.apply = function (compiler) {
       for(var urlKey in this.options){
           if(key == urlKey){
               this.shell.shellClone(this.options[urlKey])
-              compiler.options.resolve.alias[key] = path.resolve(__dirname, '../../' + this.folderName + '\\' + getGitFolderName(this.options[urlKey]))
+              compiler.options.resolve.alias[key] = path.resolve(__dirname, '../../' + this.folderName + '/' + getGitFolderName(this.options[urlKey]))
           }
       }
   }
