@@ -11,6 +11,11 @@ function SourceDebugPlugin (options) {
 SourceDebugPlugin.prototype.apply = function (compiler) {
   
   this.shell.shellMkdir()
+  // for webpack4
+  if(compiler.compiler){
+    compiler = compiler.compiler
+  }
+
   for(var key in compiler.options.resolve.alias){
       for(var urlKey in this.options){
           if(key == urlKey){
