@@ -1,10 +1,9 @@
-
 var path = require('path')
 var sheller = require('./lib/shell')
 
 function SourceDebugPlugin (options) {
-  this.folderName = options[0]
-  this.options = options[1]
+  this.folderName = arguments[0]
+  this.options = arguments[1]
   this.shell = new sheller(this.folderName)
 }
 
@@ -17,14 +16,21 @@ SourceDebugPlugin.prototype.apply = function (compiler) {
   }
 
   for(var key in compiler.options.resolve.alias){
-      for(var urlKey in this.options){
-          if(key == urlKey){
-              this.shell.shellClone(this.options[urlKey])
-              compiler.options.resolve.alias[key] = path.resolve(__dirname, '../../' + this.folderName + '/' + getGitFolderName(this.options[urlKey]))
-          }
-      }
-  }
-
+      for(var index in this.options){
+            if(this.options[index][key]){
+                let originalUrl = compiler.options.resolve.alias[key]
+                let nowUrl = path.resolve(__dirname, '../../' + this.folderName + '/' + getGitFolderName(this.options[index][key]))
+                this.shell.shellClone(this.options[index][key])
+                compiler.options.resolve.alias[key] = nowUrl
+                if(this.options[index].transform){
+                    let transform = this.options[index].transform
+                    for(var index in transform){
+                        this.shell.shellMv(nowUrl, transform[index].from, transform[index].to)
+                    }
+                }
+            }
+        }
+    }
 }
 
 

@@ -21,15 +21,31 @@ var SourceDebugPlugin = require('source-debug-plugin')
 
 
 plugins: [
-        new SourceDebugPlugin([
-            'sourcetest',
-            //此处为指定文件夹名称
+    new SourceDebugPlugin(
+        // 指定根目录下文件夹名称，clone的依赖将会放在此文件夹中
+        'sourcetest',
+        //以对象数组的形式存放要调试的依赖配置
+        [
             {
-                lodash: 'https://github.com/garinghu/lodash.git'
-                //以键值对的形式加载依赖（包名：git地址）
+                // 第一个属性，输入要替换的包名及git路径（包名：git地址）
+                packageName: 'gitUrl',
+                // 第二个属性，对clone后的依赖进行文件夹或文件名替换
+                transform: [
+                    {
+                        // 将该依赖下的src文件夹改名为lib
+                        from: 'src',
+                        to: 'lib'
+                    },
+                    {
+                        // 将lib文件夹下的index.jsx文件改为index.js
+                        from: 'lib/index.jsx',
+                        to: 'lib/index.js'
+                    }
+                ]
             }
-        ]),    
-    ]
+        ]
+    )
+]
 ```
 
 它会在根目录下创建可指定名称的文件夹，将更新的依赖通过**git clone**的方法放到该文件夹下，并动态修改config中的**alias**来实现源码调试
@@ -41,3 +57,6 @@ plugins: [
 
 ### @1.0.1
 可适配webpack4
+
+### @1.0.2
+为解决最初版本的问题，添加了用户可配置**git clone**后依赖文件结构功能，可通过修改文件夹及文件名称使依赖可用
